@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Production AI Quant Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#020617;
+    color:#fff;
+}
+
+.header{
+    padding:15px;
+    background:#0f172a;
+    display:flex;
+    justify-content:space-between;
+    font-weight:bold;
+}
+
+.container{
+    padding:15px;
+    display:grid;
+    gap:15px;
+}
+
+.card{
+    background:#0f172a;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 0 10px rgba(0,0,0,0.4);
+}
+
+select,button{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border:none;
+    border-radius:6px;
+    font-size:14px;
+}
+
+button{
+    background:#1f2937;
+    color:white;
+    font-weight:bold;
+}
+
+.signal{
+    font-size:44px;
+    font-weight:bold;
+    text-align:center;
+    margin-top:10px;
+}
+
+.buy{color:#22c55e}
+.sell{color:#ef4444}
+.wait{color:#facc15}
+
+.small{
+    font-size:13px;
+    color:#94a3b8;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <div>🤖 Production AI Quant Dashboard</div>
+    <div id="time"></div>
+</div>
+
+<div class="container">
+
+<div class="card">
+    <h3>📊 Select Asset</h3>
+
+    <select id="asset">
+        <option value="BTCUSDT">BTC/USDT</option>
+        <option value="ETHUSDT">ETH/USDT</option>
+        <option value="BNBUSDT">BNB/USDT</option>
+        <option value="EURUSDT">EUR/USD</option>
+        <option value="GBPUSDT">GBP/USD</option>
+        <option value="USDJPY">USD/JPY</option>
+        <option value="XAUUSDT">GOLD</option>
+        <option value="WTIUSDT">OIL</option>
+        <option value="ADAUSDT">ADA</option>
+        <option value="SOLUSDT">SOL</option>
+    </select>
+
+    <button onclick="run()">GET SIGNAL</button>
+</div>
+
+<div class="card">
+    <h3 style="text-align:center;">🧠 AI SIGNAL</h3>
+
+    <div id="signal" class="signal wait">WAIT</div>
+
+    <p class="small">Confidence: <span id="conf">0%</span></p>
+    <p class="small" id="info"></p>
+</div>
+
+</div>
+
+<script>
+
+// ⏰ TIME (BD)
+setInterval(()=>{
+document.getElementById("time").innerText =
+new Date().toLocaleTimeString("en-US",{timeZone:"Asia/Dhaka"});
+},1000);
+
+// 📡 FETCH DATA
+async function getData(symbol){
+let res = await fetch(
+"https://api.binance.com/api/v3/klines?symbol="+symbol+"&interval=1m&limit=50"
+);
+return await res.json();
+}
+
+// 📈 EMA
+function ema(c){
+let sum=0;
+for(let i=c.length-10;i<c.length;i++) sum+=c[i];
+return sum/10;
+}
+
+// 📉 RSI
+function rsi(c){
+let g=0,l=0;
+for(let i=1;i<c.length;i++){
+let d=c[i]-c[i-1];
+if(d>0) g+=d; else l-=d;
+}
+let rs=g/(l||1);
+return 100-(100/(1+rs));
+}
+
+// 🕯️ Candle Strength
+function candle(c){
+let body=Math.abs(c[c.length-1]-c[c.length-3]);
+let wick=Math.abs(c[c.length-2]-c[c.length-4]);
+return body>wick?1:-1;
+}
+
+// 📊 Market State
+function market(r){
+if(r>70||r<30) return "VOLATILE";
+if(r>45&&r<55) return "SIDEWAYS";
+return "TRENDING";
+}
+
+// 🧠 MEMORY
+let mem = JSON.parse(localStorage.getItem("ai_mem")||"[]");
+
+// ⚖️ VALIDATION
+function validate(score,state){
+if(state==="VOLATILE") return false;
+if(score<85) return false;
+return true;
+}
+
+// 🚀 MAIN ENGINE
+async function run(){
+
+let symbol=document.getElementById("asset").value;
+let data=await getData(symbol);
+
+let c=data.map(x=>parseFloat(x[4]));
+
+let last=c[c.length-1];
+let emaVal=ema(c);
+let r=rsi(c);
+let cd=candle(c);
+
+let trend = last>emaVal?1:-1;
+let state = market(r);
+
+// 📊 SCORE ENGINE
+let score=50;
+
+score += trend==1?25:-25;
+score += (r<30)?20:(r>70?-20:10);
+score += cd==1?15:-10;
+score += state=="TRENDING"?15:(state=="SIDEWAYS"?5:-20);
+
+// 🧠 MEMORY EFFECT
+if(mem.length>5){
+let avg=mem.reduce((a,b)=>a+b,0)/mem.length;
+score += avg>50?5:-5;
+}
+
+// 🎯 SIGNAL
+let signal="NO TRADE";
+
+if(validate(score,state)){
+if(score>=88) signal="BUY";
+else if(score<=12) signal="SELL";
+}
+
+// 💾 SAVE MEMORY
+mem.push(score);
+mem=mem.slice(-20);
+localStorage.setItem("ai_mem",JSON.stringify(mem));
+
+// 📺 SHOW
+show(signal,score,r,state);
+}
+
+// 📺 UI
+function show(signal,score,r,state){
+
+let el=document.getElementById("signal");
+el.className="signal";
+
+if(signal=="BUY") el.classList.add("buy");
+else if(signal=="SELL") el.classList.add("sell");
+else el.classList.add("wait");
+
+el.innerText=signal;
+
+document.getElementById("conf").innerText=score.toFixed(1)+"%";
+
+document.getElementById("info").innerText =
+"RSI: "+r.toFixed(1)+" | Market: "+state+" | MODE: PRODUCTION AI";
+}
+
+</script>
+
+</body>
+</html>
