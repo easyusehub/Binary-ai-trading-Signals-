@@ -1,0 +1,668 @@
+/* =========================
+   AI FOREX SIGNAL PRO
+   STYLE.CSS - PART 1
+========================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'Poppins',sans-serif;
+
+background:#07111f;
+
+color:#ffffff;
+
+display:flex;
+
+min-height:100vh;
+
+overflow-x:hidden;
+
+}
+
+/* =========================
+Sidebar
+========================= */
+
+.sidebar{
+
+width:260px;
+
+background:#0b1728;
+
+padding:25px;
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+bottom:0;
+
+border-right:1px solid rgba(255,255,255,.08);
+
+}
+
+.logo{
+
+text-align:center;
+
+margin-bottom:40px;
+
+}
+
+.logo h2{
+
+font-size:28px;
+
+font-weight:700;
+
+color:#4ade80;
+
+letter-spacing:1px;
+
+}
+
+.sidebar ul{
+
+list-style:none;
+
+}
+
+.sidebar li{
+
+padding:15px;
+
+margin-bottom:10px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.3s;
+
+font-weight:500;
+
+}
+
+.sidebar li:hover{
+
+background:#14243d;
+
+}
+
+.sidebar .active{
+
+background:#2563eb;
+
+}
+
+/* =========================
+Main
+========================= */
+
+.main{
+
+margin-left:260px;
+
+width:calc(100% - 260px);
+
+padding:25px;
+
+}
+
+/* =========================
+Header
+========================= */
+
+header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:30px;
+
+}
+
+header h1{
+
+font-size:32px;
+
+font-weight:700;
+
+}
+
+header p{
+
+color:#94a3b8;
+
+margin-top:5px;
+
+}
+
+.clock{
+
+background:#111c31;
+
+padding:12px 20px;
+
+border-radius:10px;
+
+font-size:18px;
+
+font-weight:600;
+
+}
+
+/* =========================
+Cards
+========================= */
+
+.card{
+
+background:#101c2f;
+
+padding:20px;
+
+border-radius:15px;
+
+border:1px solid rgba(255,255,255,.05);
+
+box-shadow:0 8px 25px rgba(0,0,0,.25);
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-5px);
+
+}
+
+/* =========================
+Overview
+========================= */
+
+.overview{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:20px;
+
+margin-bottom:30px;
+
+}
+
+.overview h3{
+
+font-size:14px;
+
+color:#94a3b8;
+
+margin-bottom:12px;
+
+}
+
+.overview h1{
+
+font-size:34px;
+
+}
+
+/* =========================
+Asset + Timeframe
+========================= */
+
+.asset-box,
+
+.time-box{
+
+margin-bottom:25px;
+
+}
+
+.asset-box h2,
+
+.time-box h2{
+
+margin-bottom:10px;
+
+}
+
+select{
+
+width:100%;
+
+padding:14px;
+
+background:#0f1b2d;
+
+color:white;
+
+border:1px solid #223553;
+
+border-radius:10px;
+
+font-size:15px;
+
+outline:none;
+
+}
+
+/* =========================
+Signal Panel
+========================= */
+
+.signal-panel{
+
+margin-top:30px;
+
+}
+
+#signalCard{
+
+background:#0d1728;
+
+padding:30px;
+
+border-radius:15px;
+
+text-align:center;
+
+border:1px solid rgba(255,255,255,.06);
+
+}
+
+#signal{
+
+font-size:55px;
+
+font-weight:700;
+
+margin-bottom:15px;
+
+}
+
+#pattern,
+
+#trend,
+
+#confidence{
+
+font-size:18px;
+
+margin-top:10px;
+
+color:#cbd5e1;
+
+}
+
+/* BUY SELL WAIT */
+
+.buy{
+
+color:#22c55e;
+
+}
+
+.sell{
+
+color:#ef4444;
+
+}
+
+.wait{
+
+color:#facc15;
+
+}
+/* =========================
+PATTERN PANEL
+========================= */
+
+.pattern-panel{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:20px;
+
+margin-top:30px;
+
+margin-bottom:30px;
+
+}
+
+/* =========================
+MARKET INFO
+========================= */
+
+.market-info{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:20px;
+
+margin-bottom:30px;
+
+}
+
+.market-info .card{
+
+text-align:center;
+
+}
+
+.market-info h3{
+
+color:#94a3b8;
+
+font-size:14px;
+
+margin-bottom:12px;
+
+}
+
+.market-info h2{
+
+font-size:28px;
+
+font-weight:700;
+
+}
+
+/* =========================
+CHART
+========================= */
+
+.chart-section{
+
+margin-bottom:30px;
+
+}
+
+.chart-section canvas{
+
+width:100%;
+
+height:350px;
+
+}
+
+/* =========================
+HISTORY TABLE
+========================= */
+
+.history{
+
+margin-bottom:30px;
+
+overflow-x:auto;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+margin-top:20px;
+
+}
+
+thead{
+
+background:#16253d;
+
+}
+
+th{
+
+padding:15px;
+
+font-size:14px;
+
+text-align:left;
+
+}
+
+td{
+
+padding:15px;
+
+border-bottom:1px solid rgba(255,255,255,.05);
+
+font-size:14px;
+
+}
+
+tbody tr:hover{
+
+background:#14243d;
+
+}
+
+/* =========================
+ACCURACY
+========================= */
+
+.accuracy-box{
+
+margin-bottom:30px;
+
+}
+
+.accuracy-box p{
+
+margin-top:12px;
+
+font-size:17px;
+
+}
+
+.accuracy-box span{
+
+color:#4ade80;
+
+font-weight:600;
+
+}
+
+/* =========================
+FOOTER
+========================= */
+
+footer{
+
+margin-top:40px;
+
+text-align:center;
+
+color:#94a3b8;
+
+padding:20px;
+
+}
+
+/* =========================
+BUTTON
+========================= */
+
+button{
+
+padding:14px 25px;
+
+background:#2563eb;
+
+color:white;
+
+border:none;
+
+border-radius:10px;
+
+font-size:16px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+button:hover{
+
+background:#1d4ed8;
+
+}
+
+/* =========================
+ANIMATION
+========================= */
+
+.card{
+
+animation:fadeUp .4s ease;
+
+}
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(15px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* =========================
+SCROLLBAR
+========================= */
+
+::-webkit-scrollbar{
+
+width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:#2563eb;
+
+border-radius:20px;
+
+}
+
+::-webkit-scrollbar-track{
+
+background:#07111f;
+
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media(max-width:1100px){
+
+.overview,
+.market-info{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+.pattern-panel{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.sidebar{
+
+position:relative;
+
+width:100%;
+
+height:auto;
+
+border-right:none;
+
+}
+
+.main{
+
+margin-left:0;
+
+width:100%;
+
+padding:15px;
+
+}
+
+header{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:15px;
+
+}
+
+.overview{
+
+grid-template-columns:1fr;
+
+}
+
+.market-info{
+
+grid-template-columns:1fr;
+
+}
+
+#signal{
+
+font-size:42px;
+
+}
+
+table{
+
+font-size:12px;
+
+}
+
+}
