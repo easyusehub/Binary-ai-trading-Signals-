@@ -120,3 +120,119 @@ function detectPattern(prev, curr) {
     return "None";
 
 }
+
+// =====================================
+// patterns.js - Part 2
+// =====================================
+
+// Inverted Hammer
+function isInvertedHammer(c){
+
+    return (
+        upperShadow(c) > body(c)*2 &&
+        lowerShadow(c) < body(c)
+    );
+
+}
+
+// Hanging Man
+function isHangingMan(c){
+
+    return (
+        lowerShadow(c) > body(c)*2 &&
+        upperShadow(c) < body(c)
+    );
+
+}
+
+// Marubozu
+function isMarubozu(c){
+
+    return (
+
+        upperShadow(c) < body(c)*0.05 &&
+        lowerShadow(c) < body(c)*0.05
+
+    );
+
+}
+
+// Bullish Harami
+function isBullishHarami(prev,curr){
+
+    return (
+
+        bearish(prev) &&
+        bullish(curr) &&
+        curr.open > prev.close &&
+        curr.close < prev.open
+
+    );
+
+}
+
+// Bearish Harami
+function isBearishHarami(prev,curr){
+
+    return (
+
+        bullish(prev) &&
+        bearish(curr) &&
+        curr.open < prev.close &&
+        curr.close > prev.open
+
+    );
+
+}
+
+// Tweezer Top
+function isTweezerTop(prev,curr){
+
+    return (
+
+        bullish(prev) &&
+        bearish(curr) &&
+        Math.abs(prev.high-curr.high)<0.0002
+
+    );
+
+}
+
+// Tweezer Bottom
+function isTweezerBottom(prev,curr){
+
+    return (
+
+        bearish(prev) &&
+        bullish(curr) &&
+        Math.abs(prev.low-curr.low)<0.0002
+
+    );
+
+}
+
+// Morning Star
+function isMorningStar(a,b,c){
+
+    return (
+
+        bearish(a) &&
+        body(b) < body(a)*0.5 &&
+        bullish(c)
+
+    );
+
+}
+
+// Evening Star
+function isEveningStar(a,b,c){
+
+    return (
+
+        bullish(a) &&
+        body(b) < body(a)*0.5 &&
+        bearish(c)
+
+    );
+
+}
