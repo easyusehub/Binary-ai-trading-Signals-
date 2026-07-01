@@ -1,249 +1,365 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<title>Quantum AI Final System</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:#020617;
-    color:white;
-}
+<title>AI Forex Signal Pro</title>
 
-.header{
-    padding:15px;
-    background:#0f172a;
-    display:flex;
-    justify-content:space-between;
-}
+<link rel="stylesheet" href="css/style.css">
 
-.container{
-    padding:15px;
-    display:grid;
-    gap:15px;
-}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-.card{
-    background:#0f172a;
-    padding:15px;
-    border-radius:12px;
-}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-select,button{
-    width:100%;
-    padding:10px;
-    margin-top:10px;
-    border:none;
-    border-radius:6px;
-}
-
-button{
-    background:#1f2937;
-    color:white;
-    font-weight:bold;
-}
-
-.signal{
-    font-size:40px;
-    font-weight:bold;
-    text-align:center;
-}
-
-.buy{color:#22c55e}
-.sell{color:#ef4444}
-.wait{color:#facc15}
-
-.small{
-    font-size:13px;
-    color:#94a3b8;
-}
-</style>
 </head>
 
 <body>
 
-<div class="header">
-    <div>🤖 QUANT FINAL AI SYSTEM</div>
-    <div id="time"></div>
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+<div class="logo">
+<h2>AI SIGNAL</h2>
 </div>
 
-<div class="container">
+<ul>
+
+<li class="active">🏠 Dashboard</li>
+
+<li>📊 Live Signals</li>
+
+<li>📈 Market</li>
+
+<li>🕒 History</li>
+
+<li>🎯 Accuracy</li>
+
+<li>⚙ Settings</li>
+
+</ul>
+
+</div>
+
+<!-- Main -->
+
+<div class="main">
+
+<!-- Header -->
+
+<header>
+
+<div>
+
+<h1>Forex AI Signal Dashboard</h1>
+
+<p>Professional Signal Platform</p>
+
+</div>
+
+<div class="clock" id="clock">
+00:00:00
+</div>
+
+</header>
+
+<!-- Overview -->
+
+<section class="overview">
 
 <div class="card">
-    <h3>📊 Asset</h3>
 
-    <select id="asset">
-        <option value="BTCUSDT">BTC</option>
-        <option value="ETHUSDT">ETH</option>
-        <option value="EURUSDT">EUR/USD</option>
-        <option value="XAUUSDT">GOLD</option>
-    </select>
+<h3>Total Signals</h3>
 
-    <h3>⏱ Timeframe</h3>
+<h1 id="totalSignals">0</h1>
 
-    <select id="tf">
-        <option value="30s">30 SEC</option>
-        <option value="1m">1 MIN</option>
-        <option value="2m">2 MIN</option>
-        <option value="5m">5 MIN</option>
-        <option value="15m">15 MIN</option>
-    </select>
-
-    <button onclick="run()">GET SIGNAL</button>
 </div>
 
 <div class="card">
-    <h3 style="text-align:center;">SIGNAL</h3>
-    <div id="signal" class="signal wait">WAIT</div>
 
-    <p class="small">Confidence: <span id="conf">0%</span></p>
-    <p class="small" id="acc">Accuracy: --</p>
-    <p class="small" id="stats">Trades: 0 | Wins: 0 | Losses: 0</p>
-    <p class="small" id="info"></p>
-</div>
+<h3>Accuracy</h3>
+
+<h1 id="accuracy">0%</h1>
 
 </div>
 
-<script>
+<div class="card">
 
-// ⏰ TIME
-setInterval(()=>{
-document.getElementById("time").innerText =
-new Date().toLocaleTimeString("en-US",{timeZone:"Asia/Dhaka"});
-},1000);
+<h3>Wins</h3>
 
-// 📡 DATA
-async function getData(symbol,tf){
-let res = await fetch(
-"https://api.binance.com/api/v3/klines?symbol="+symbol+"&interval=1m&limit=100"
-);
-return await res.json();
-}
+<h1 id="wins">0</h1>
 
-// 📈 EMA
-function ema(c){
-let s=0;
-for(let i=c.length-10;i<c.length;i++) s+=c[i];
-return s/10;
-}
+</div>
 
-// 📉 RSI
-function rsi(c){
-let g=0,l=0;
-for(let i=1;i<c.length;i++){
-let d=c[i]-c[i-1];
-if(d>0)g+=d;else l-=d;
-}
-let rs=g/(l||1);
-return 100-(100/(1+rs));
-}
+<div class="card">
 
-// 🕯 Candle
-function candle(c){
-return c[c.length-1] > c[c.length-3] ? 1 : -1;
-}
+<h3>Losses</h3>
 
-// 📊 Market
-function market(r){
-if(r>70||r<30) return "VOLATILE";
-if(r>45&&r<55) return "SIDEWAYS";
-return "TRENDING";
-}
+<h1 id="losses">0</h1>
 
-// 🧠 MEMORY
-let mem = JSON.parse(localStorage.getItem("mem")||"[]");
-let wins = parseInt(localStorage.getItem("wins")||0);
-let losses = parseInt(localStorage.getItem("losses")||0);
-let trades = parseInt(localStorage.getItem("trades")||0);
+</div>
 
-// ⚖️ VALIDATE
-function valid(score,state){
-if(state==="VOLATILE") return false;
-return score>85 || score<15;
-}
+</section>
 
-// 🚀 ENGINE
-async function run(){
+<!-- Asset Selector -->
 
-let symbol=document.getElementById("asset").value;
-let tf=document.getElementById("tf").value;
+<section class="asset-box">
 
-let data=await getData(symbol,tf);
+<h2>Select Asset</h2>
 
-let c=data.map(x=>parseFloat(x[4]));
+<select id="asset">
 
-let last=c[c.length-1];
-let emaVal=ema(c);
-let r=rsi(c);
-let cd=candle(c);
-let state=market(r);
+<option>EUR/USD</option>
 
-// SCORE
-let score=50;
+<option>GBP/USD</option>
 
-score += last>emaVal?25:-25;
-score += r<30?20:(r>70?-20:10);
-score += cd==1?15:-10;
-score += state=="TRENDING"?15:-15;
+<option>USD/JPY</option>
 
-// SIGNAL
-let signal="NO TRADE";
+<option>XAU/USD</option>
 
-if(valid(score,state)){
-if(score>=88) signal="BUY";
-else if(score<=12) signal="SELL";
-}
+<option>USD/CAD</option>
 
-// SIMULATE RESULT (backtest style)
-let win = Math.random()>0.4;
+</select>
 
-if(signal!="NO TRADE"){
-trades++;
-if(win) wins++; else losses++;
-}
+</section>
 
-localStorage.setItem("wins",wins);
-localStorage.setItem("losses",losses);
-localStorage.setItem("trades",trades);
+<!-- Timeframe -->
 
-// ACCURACY
-let acc = trades>0 ? ((wins/trades)*100).toFixed(1) : 0;
+<section class="time-box">
 
-// MEMORY
-mem.push(score);
-mem=mem.slice(-20);
-localStorage.setItem("mem",JSON.stringify(mem));
+<h2>Select Timeframe</h2>
 
-// SHOW
-show(signal,score,r,state,acc);
+<select id="timeframe">
 
-}
+<option>30 Seconds</option>
 
-// 📺 UI
-function show(signal,score,r,state,acc){
+<option>1 Minute</option>
 
-let el=document.getElementById("signal");
-el.className="signal";
+<option>2 Minutes</option>
 
-if(signal=="BUY") el.classList.add("buy");
-else if(signal=="SELL") el.classList.add("sell");
-else el.classList.add("wait");
+<option>5 Minutes</option>
 
-el.innerText=signal;
+<option>15 Minutes</option>
 
-document.getElementById("conf").innerText=score.toFixed(1)+"%";
-document.getElementById("acc").innerText="Accuracy: "+acc+"%";
-document.getElementById("stats").innerText=
-"Trades: "+trades+" | Wins: "+wins+" | Losses: "+losses;
+</select>
 
-document.getElementById("info").innerText=
-"RSI: "+r.toFixed(1)+" | Market: "+state+" | MODE: FINAL QUANT AI";
-}
+</section>
 
-</script>
+<!-- Signal Panel -->
+
+<section class="signal-panel">
+
+<h2>AI Signal</h2>
+
+<div id="signalCard">
+
+<h1 id="signal">WAIT</h1>
+
+<p id="pattern">
+Pattern : Waiting...
+</p>
+
+<p id="trend">
+Trend : Waiting...
+</p>
+
+<p id="confidence">
+Confidence : 0%
+</p>
+
+</div>
+
+</section>
+    <!-- ========================= -->
+<!-- Candlestick Pattern Panel -->
+<!-- ========================= -->
+
+<section class="pattern-panel">
+
+    <div class="card">
+        <h2>Detected Pattern</h2>
+
+        <h1 id="patternName">None</h1>
+
+        <p id="patternDesc">
+            Waiting for market analysis...
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>AI Decision</h2>
+
+        <h1 id="decision">
+            WAIT
+        </h1>
+
+        <p id="reason">
+            Waiting for confirmation...
+        </p>
+
+    </div>
+
+</section>
+
+<!-- ========================= -->
+<!-- Live Market Info -->
+<!-- ========================= -->
+
+<section class="market-info">
+
+<div class="card">
+
+<h3>Trend</h3>
+
+<h2 id="trendValue">
+Unknown
+</h2>
+
+</div>
+
+<div class="card">
+
+<h3>RSI</h3>
+
+<h2 id="rsiValue">
+--
+</h2>
+
+</div>
+
+<div class="card">
+
+<h3>MACD</h3>
+
+<h2 id="macdValue">
+--
+</h2>
+
+</div>
+
+<div class="card">
+
+<h3>EMA Trend</h3>
+
+<h2 id="emaValue">
+--
+</h2>
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- Chart -->
+<!-- ========================= -->
+
+<section class="chart-section">
+
+<div class="card">
+
+<h2>Live Analysis Chart</h2>
+
+<canvas id="marketChart"></canvas>
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- History -->
+<!-- ========================= -->
+
+<section class="history">
+
+<div class="card">
+
+<h2>Signal History</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Time</th>
+
+<th>Asset</th>
+
+<th>TF</th>
+
+<th>Pattern</th>
+
+<th>Signal</th>
+
+<th>Result</th>
+
+</tr>
+
+</thead>
+
+<tbody id="historyTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- Accuracy -->
+<!-- ========================= -->
+
+<section class="accuracy-box">
+
+<div class="card">
+
+<h2>Performance</h2>
+
+<p>Total Signals :
+<span id="statSignals">0</span></p>
+
+<p>Wins :
+<span id="statWins">0</span></p>
+
+<p>Losses :
+<span id="statLosses">0</span></p>
+
+<p>Accuracy :
+<span id="statAccuracy">0%</span></p>
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- Footer -->
+<!-- ========================= -->
+
+<footer>
+
+<p>
+
+AI Forex Signal Pro
+
+</p>
+
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/patterns.js"></script>
+<script src="js/indicators.js"></script>
+<script src="js/history.js"></script>
+<script src="js/ai-engine.js"></script>
+<script src="js/app.js"></script>
 
 </body>
+
 </html>
+    
+    
